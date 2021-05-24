@@ -44,6 +44,14 @@ const formReducer = (state = initialState, action) => {
           age: action.age,
         },
       };
+    case actionTypes.ADULT_PARTICIPANT:
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          age: action.age,
+        },
+      };
     default:
       return state;
   }

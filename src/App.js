@@ -6,6 +6,7 @@ import FormStart from "./pages/FormStart";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import "./App.css";
+import FormStepTwo from "./pages/FormStepTwo";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
 
       <Switch>
         <Route exact path="/" component={FormStart} />
-        <Route exact path="/step-two" component={FormStart} />
+        <Route exact path="/step-two" component={FormStepTwo} />
       </Switch>
     </Router>
   );

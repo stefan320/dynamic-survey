@@ -17,20 +17,18 @@ const FormStart = (props) => {
     if (data.age <= 18) {
       props.addMinorParticipant(data.age);
     } else {
+      props.addAdultParticipant(data.age);
       history.push("/step-two");
     }
   };
   const onError = (error) => console.log(error);
-
-  useEffect(() => {
-    console.log(props);
-  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div>
         <label htmlFor={"age"}>Age</label>
         <input
+          type={"number"}
           id={"age"}
           {...register("age", {
             required: { value: true, message: "This Field is required" },
@@ -56,15 +54,13 @@ const FormStart = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return state;
-};
-
 const mapDispatchToProps = (dispatch) => {
   return {
     addMinorParticipant: (age) =>
       dispatch(actionCreators.addMinorParticipant(age)),
+    addAdultParticipant: (age) =>
+      dispatch(actionCreators.addAdultParticipant(age)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormStart);
+export default connect(null, mapDispatchToProps)(FormStart);
