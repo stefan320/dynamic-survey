@@ -16,7 +16,7 @@ const initialState = {
     age: "",
     gender: "",
     drivingLicense: "",
-    firstCar: "",
+    firstTimer: "",
     drivetrainPreference: "",
     emmissionConcerned: "",
     numOfCars: 0,
@@ -50,6 +50,30 @@ const formReducer = (state = initialState, action) => {
         currentUser: {
           ...state.currentUser,
           age: action.age,
+        },
+      };
+    case actionTypes.FIRST_TIMER:
+      return {
+        ...state,
+        currentUser: {
+          ...state.currentUser,
+          firstTimer: action.isFirstTimer,
+        },
+        participants: {
+          ...state.participants,
+          firstTimers: state.participants.firstTimers + 1,
+        },
+      };
+    case actionTypes.NOT_LICENSED:
+      return {
+        ...state,
+        participants: {
+          ...state.participants,
+          unlicensed: state.participants.unlicensed + 1,
+        },
+        currentUser: {
+          ...state.currentUser,
+          drivingLicense: action.isLicensed,
         },
       };
     default:

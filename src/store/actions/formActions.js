@@ -15,8 +15,18 @@ export const addAdultParticipant = (age) => {
 };
 
 export const isParticipantLicensed = (isLicensed) => {
+  if (isLicensed === "no") {
+    return {
+      type: actionTypes.NOT_LICENSED,
+      isLicensed,
+    };
+  }
+};
+
+export const isFirstTimer = (isFirstTimer) => {
+  console.log(2323);
   return {
-    type: actionTypes.IS_PARTICIPANT_LICENSED,
-    isLicensed,
+    type: actionTypes.FIRST_TIMER,
+    isFirstTimer,
   };
 };

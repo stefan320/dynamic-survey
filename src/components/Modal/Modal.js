@@ -33,8 +33,6 @@ const SimpleModal = (props) => {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
 
-  console.log(props);
-
   const body = (
     <div style={modalStyle} className={classes.paper}>
       {props.children}

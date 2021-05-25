@@ -29,23 +29,32 @@ const FormStepTwo = (props) => {
   const [modalMsg, setModalMsg] = useState("");
 
   const onSubmit = (data) => {
-    props.isParticipantLicensed(data.isLicensed);
+    console.log("SUBMITT");
 
     if (drivingLicense === "no") {
       setModalMsg("Thank you for your interest.");
-      return setModalState(true);
+      setModalState(true);
+      props.isParticipantLicensed(false);
+      return;
     }
 
     if (isFirstCar === "yes") {
       setModalMsg(
         "We are targeting more experienced clients, thank you for your interest."
       );
-      return setModalState(true);
+      setModalState(true);
+      props.isParticipantLicensed(true);
+      props.isFirstTimer(true);
+      return;
+    } else {
+      // first car = "no" & licensed OR licensed over 25
+      history.push("/step-three");
     }
   };
   const onError = (error) => console.log(error);
 
   const selectChangeHandler = (e, setStateVar) => {
+    console.log(e.target.value);
     setStateVar(e.target.value);
   };
 
@@ -53,7 +62,7 @@ const FormStepTwo = (props) => {
     props.participantAge >= 18 &&
     props.participantAge <= 25 &&
     drivingLicense === "yes" ? (
-      <div>
+      <FormControl>
         <FormLabel htmlFor={"isFirstCar"}>Is this your first car?</FormLabel>
         <Select
           id={"isFirstCar"}
@@ -65,7 +74,7 @@ const FormStepTwo = (props) => {
           <MenuItem value="no">No</MenuItem>
         </Select>
         {errors.isFirstCar && <span>This Field is required</span>}
-      </div>
+      </FormControl>
     ) : null;
 
   return (
@@ -110,6 +119,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     isParticipantLicensed: (value) =>
       dispatch(actionCreators.isParticipantLicensed(value)),
+
+    isFirstTimer: (value) => dispatch(actionCreators.isFirstTimer(value)),
   };
 };
 

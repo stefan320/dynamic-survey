@@ -2,11 +2,12 @@ import React from "react";
 import Header from "./components/Header/Header";
 
 import FormStart from "./pages/FormStart";
+import FormStepTwo from "./pages/FormStepTwo";
+import FormStepThree from "./pages/FormStepThree";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import "./App.css";
-import FormStepTwo from "./pages/FormStepTwo";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={FormStart} />
         <Route exact path="/step-two" component={FormStepTwo} />
+        <Route exact path="/step-three" component={FormStepThree} />
       </Switch>
     </Router>
   );
