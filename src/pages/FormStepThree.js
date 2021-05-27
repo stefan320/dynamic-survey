@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as actionCreators from "../store/actions/formActions";
@@ -22,76 +22,96 @@ const FormStepThree = (props) => {
     formState: { errors },
   } = useForm();
 
-  const history = useHistory();
-
-  console.log(watch("carModel-0"));
-
   // Iputs State
   const [drivetrain, setDriveTrain] = useState("rwd");
   const [emmisionsConcerned, setEmissions] = useState("no");
   const [totalCars, setTotalCars] = useState("");
   const [carModels, setCarModels] = useState(null);
 
+  const [errorState, setErrorState] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
+  const { fields, append, remove } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: "participantCars", // unique name for your Field Array
+  });
+
   const onSubmit = (data) => {
     console.log("SUBMITT");
-
-    console.log(data);
-    //   Submission Complete
-    // history.push("/thank-you");
+    // console.log(data);
+    props.targetableParticipant(data);
   };
 
   const onError = (error) => console.error(error);
 
   const inputChangeHandler = (e, setStateVar) => {
-    console.log(e.target.value);
     setStateVar(e.target.value);
   };
 
-  const dynamicInputsHandler = (e, setStateVar) => {
-    setStateVar(e.target.value);
-    let carModelsArr = [];
-
-    for (let i = 0; i < e.target.value; i++) {
-      carModelsArr.push([]);
-    }
-
-    carModelsArr.forEach((arr, i) => {
-      carModelsArr[i] = (
-        <FormControl key={i}>
-          <InputLabel id={`carBrand-${i}-label`}>Car Brand</InputLabel>
-          <Select
-            labelId={`carBrand-${i}-label`}
-            {...register(`carBrand-${i}`, { required: true })}
-            defaultValue={watch(`carBrand-${i}`)}
-          >
-            <MenuItem value="Audi">Audi</MenuItem>
-            <MenuItem value="BMW">BMW</MenuItem>
-            <MenuItem value="Lexus">Lexus</MenuItem>
-            <MenuItem value="Mazda">Mazda</MenuItem>
-            <MenuItem value="Mercedes">Mercedes</MenuItem>
-            <MenuItem value="Tesla">Tesla</MenuItem>
-          </Select>
-          {/* {errors.isLicensed && <span>This Field is required</span>} */}
-          <TextField
-            id={`carModel-${i}`}
-            label={`Car Model`}
-            defaultValue={watch(`carModel-${i}`)}
-            {...register(`carModel-${i}`, { required: true })}
-          />
-        </FormControl>
+  useEffect(() => {
+    const inputs = [];
+    //  if the ammount of cars is higher than previous value
+    if (totalCars > fields.length) {
+      for (let i = fields.length; i < totalCars; i++) {
+        inputs.push({ carBrand: "BMW", carModel: "" });
+      }
+      append(inputs);
+    } else {
+      //if its lower remove the extra inputs
+      const inputElementIndexes = Array.from(Array(fields.length).keys());
+      const indexesToRemove = inputElementIndexes.splice(
+        totalCars,
+        fields.length
       );
-    });
+      remove(indexesToRemove);
+    }
+  }, [totalCars]);
 
-    setCarModels(carModelsArr);
-  };
+  const cars = fields.map((field, index) => (
+    <div key={field.id}>
+      <FormControl>
+        <InputLabel id={`carBrand-${index}-label`}>Car Brand</InputLabel>
+        <Select
+          labelId={`carBrand-${index}-label`}
+          {...register(`participantCars.${index}.carBrand`, { required: true })}
+          defaultValue={"BMW"}
+        >
+          <MenuItem value="Audi">Audi</MenuItem>
+          <MenuItem value="BMW">BMW</MenuItem>
+          <MenuItem value="Lexus">Lexus</MenuItem>
+          <MenuItem value="Mazda">Mazda</MenuItem>
+          <MenuItem value="Mercedes">Mercedes</MenuItem>
+          <MenuItem value="Tesla">Tesla</MenuItem>
+        </Select>
+      </FormControl>
+
+      <TextField
+        defaultValue={field.carModel}
+        label={"Car Model"}
+        {...register(`participantCars.${index}.carModel`, {
+          required: "This field is required",
+          validate: {
+            carValidation: (value) =>
+              value[0].toLowerCase() === "m" || //starts with m
+              value[0].toLowerCase() === "x" || // starts with x
+              value[0].toLowerCase() === "z" || //starts with z
+              (parseInt(value) && value.length === 1) || // 1 number
+              (parseInt(value) && value.length === 3) || // 3 numbers
+              "Invalid Car Model", //Invalid message
+          },
+        })}
+      />
+      {errors.participantCars &&
+        (errors.participantCars[index] ? (
+          <span>{errors.participantCars[index].carModel.message}</span>
+        ) : null)}
+    </div>
+  ));
 
   return (
     <Container>
       <SimpleModal open={modalState}>{modalMsg}</SimpleModal>
-
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <FormControl>
           <InputLabel id={"drivetrain-label"}>
@@ -131,13 +151,13 @@ const FormStepThree = (props) => {
         <TextField
           id="totalCars"
           type="number"
+          min="0"
           label="How many cars do you have in your family?"
           {...register("totalCars", { required: true })}
-          onChange={(e) => dynamicInputsHandler(e, setTotalCars)}
-          value={totalCars}
+          onChange={(e) => inputChangeHandler(e, setTotalCars)}
+          value={totalCars >= 0 ? totalCars : ""}
         />
-
-        {carModels ? carModels : null}
+        {cars}
         <Button type="submit" variant="outlined" color="secondary">
           Continue
         </Button>
@@ -148,10 +168,8 @@ const FormStepThree = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    isParticipantLicensed: (value) =>
-      dispatch(actionCreators.isParticipantLicensed(value)),
-
-    isFirstTimer: (value) => dispatch(actionCreators.isFirstTimer(value)),
+    targetableParticipant: (data) =>
+      dispatch(actionCreators.targetableParticipant(data)),
   };
 };
 

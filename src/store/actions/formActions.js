@@ -24,9 +24,22 @@ export const isParticipantLicensed = (isLicensed) => {
 };
 
 export const isFirstTimer = (isFirstTimer) => {
-  console.log(2323);
   return {
     type: actionTypes.FIRST_TIMER,
     isFirstTimer,
+  };
+};
+
+export const targetableParticipant = (data) => {
+  console.log(data);
+  const targetablesData = {
+    careAboutEmissions: data.emissions === "yes" ? 1 : 0,
+    fwdOrIdk: data.drivetrain === "fwd" || data.drivetrain === "idk" ? 1 : 0,
+    amountOfCars: parseInt(data.totalCars),
+  };
+  return {
+    type: actionTypes.TARGETABLE_PARTICIPANT,
+    currentUser: data,
+    targetablesData,
   };
 };

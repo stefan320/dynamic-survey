@@ -10,7 +10,7 @@ const initialState = {
   targetablesData: {
     careAboutEmissions: 0,
     fwdOrIdk: 0,
-    ammountOfCars: 0,
+    ammountOfCars: [],
   },
   currentUser: {
     age: "",
@@ -20,12 +20,7 @@ const initialState = {
     drivetrainPreference: "",
     emmissionConcerned: "",
     numOfCars: 0,
-    carModels: [
-      {
-        make: "",
-        model: "",
-      },
-    ],
+    carModels: [],
   },
 };
 
@@ -74,6 +69,34 @@ const formReducer = (state = initialState, action) => {
         currentUser: {
           ...state.currentUser,
           drivingLicense: action.isLicensed,
+        },
+      };
+    case actionTypes.TARGETABLE_PARTICIPANT:
+      console.log(action);
+      return {
+        ...state,
+        participants: {
+          ...state.participants,
+          targetables: state.participants.targetables + 1,
+        },
+        targetablesData: {
+          ...state.targetablesData,
+          careAboutEmissions:
+            state.targetablesData.careAboutEmissions +
+            action.targetablesData.careAboutEmissions,
+          fwdOrIdk:
+            state.targetablesData.fwdOrIdk + action.targetablesData.fwdOrIdk,
+          ammountOfCars: [
+            ...state.targetablesData.ammountOfCars,
+            action.targetablesData.amountOfCars,
+          ],
+        },
+        currentUser: {
+          ...state.currentUser,
+          drivetrainPreference: action.currentUser.drivetrain,
+          emmissionConcerned: action.currentUser.emissions,
+          numOfCars: action.currentUser.totalCars,
+          carModels: action.currentUser.participantCars,
         },
       };
     default:
