@@ -15,7 +15,7 @@ export const addAdultParticipant = (age) => {
 };
 
 export const isParticipantLicensed = (isLicensed) => {
-  if (isLicensed === "no") {
+  if (!isLicensed) {
     return {
       type: actionTypes.NOT_LICENSED,
       isLicensed,
@@ -31,7 +31,7 @@ export const isFirstTimer = (isFirstTimer) => {
 };
 
 export const targetableParticipant = (data) => {
-  console.log(data);
+  console.log(data.emissions === "yes" ? 1 : 0);
   const targetablesData = {
     careAboutEmissions: data.emissions === "yes" ? 1 : 0,
     fwdOrIdk: data.drivetrain === "fwd" || data.drivetrain === "idk" ? 1 : 0,

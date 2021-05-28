@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
-import { useHistory } from "react-router-dom";
 
 const FormStart = (props) => {
   const {
@@ -11,14 +10,12 @@ const FormStart = (props) => {
     formState: { errors },
   } = useForm();
 
-  const history = useHistory();
-
   const onSubmit = (data) => {
     if (data.age <= 18) {
       props.addMinorParticipant(data.age);
     } else {
       props.addAdultParticipant(data.age);
-      history.push("/step-two");
+      props.history.push("/step-two");
     }
   };
   const onError = (error) => console.log(error);

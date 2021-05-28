@@ -6,11 +6,12 @@ const initialState = {
     unlicensed: 0,
     firstTimers: 0,
     targetables: 0,
+    total: 0,
   },
   targetablesData: {
     careAboutEmissions: 0,
     fwdOrIdk: 0,
-    ammountOfCars: [],
+    amountOfCars: [],
   },
   currentUser: {
     age: "",
@@ -33,6 +34,7 @@ const formReducer = (state = initialState, action) => {
         participants: {
           ...state.participants,
           underEighteen: state.participants.underEighteen + 1,
+          total: state.participants.total + 1,
         },
         currentUser: {
           ...state.currentUser,
@@ -57,6 +59,7 @@ const formReducer = (state = initialState, action) => {
         participants: {
           ...state.participants,
           firstTimers: state.participants.firstTimers + 1,
+          total: state.participants.total + 1,
         },
       };
     case actionTypes.NOT_LICENSED:
@@ -65,6 +68,7 @@ const formReducer = (state = initialState, action) => {
         participants: {
           ...state.participants,
           unlicensed: state.participants.unlicensed + 1,
+          total: state.participants.total + 1,
         },
         currentUser: {
           ...state.currentUser,
@@ -72,22 +76,21 @@ const formReducer = (state = initialState, action) => {
         },
       };
     case actionTypes.TARGETABLE_PARTICIPANT:
-      console.log(action);
       return {
         ...state,
         participants: {
           ...state.participants,
           targetables: state.participants.targetables + 1,
+          total: state.participants.total + 1,
         },
         targetablesData: {
           ...state.targetablesData,
-          careAboutEmissions:
-            state.targetablesData.careAboutEmissions +
-            action.targetablesData.careAboutEmissions,
+          careAboutEmissions: (state.targetablesData.careAboutEmissions +=
+            action.targetablesData.careAboutEmissions),
           fwdOrIdk:
             state.targetablesData.fwdOrIdk + action.targetablesData.fwdOrIdk,
-          ammountOfCars: [
-            ...state.targetablesData.ammountOfCars,
+          amountOfCars: [
+            ...state.targetablesData.amountOfCars,
             action.targetablesData.amountOfCars,
           ],
         },

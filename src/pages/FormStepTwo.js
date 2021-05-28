@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
 import * as actionCreators from "../store/actions/formActions";
 import SimpleModal from "../components/Modal/Modal";
 
@@ -19,7 +18,7 @@ const FormStepTwo = (props) => {
     formState: { errors },
   } = useForm();
 
-  const history = useHistory();
+  // const history = useHistory();
 
   // Iputs State
   const [drivingLicense, setDrivingLicense] = useState("no");
@@ -39,16 +38,15 @@ const FormStepTwo = (props) => {
     }
 
     if (isFirstCar === "yes") {
+      props.isFirstTimer(true);
       setModalMsg(
         "We are targeting more experienced clients, thank you for your interest."
       );
       setModalState(true);
-      props.isParticipantLicensed(true);
-      props.isFirstTimer(true);
       return;
     } else {
       // first car = "no" & licensed OR licensed over 25
-      history.push("/step-three");
+      props.history.push("/step-three");
     }
   };
   const onError = (error) => console.log(error);
@@ -119,7 +117,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     isParticipantLicensed: (value) =>
       dispatch(actionCreators.isParticipantLicensed(value)),
-
     isFirstTimer: (value) => dispatch(actionCreators.isFirstTimer(value)),
   };
 };

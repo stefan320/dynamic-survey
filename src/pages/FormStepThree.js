@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
 import * as actionCreators from "../store/actions/formActions";
 import SimpleModal from "../components/Modal/Modal";
 
@@ -17,8 +16,8 @@ const FormStepThree = (props) => {
   const {
     register,
     handleSubmit,
-    watch,
     control,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -38,9 +37,9 @@ const FormStepThree = (props) => {
   });
 
   const onSubmit = (data) => {
-    console.log("SUBMITT");
-    // console.log(data);
     props.targetableParticipant(data);
+    setModalMsg("Survey complete. Thank you for your feedback.");
+    setModalState(true);
   };
 
   const onError = (error) => console.error(error);
@@ -51,7 +50,7 @@ const FormStepThree = (props) => {
 
   useEffect(() => {
     const inputs = [];
-    //  if the ammount of cars is higher than previous value
+    //  if the amount of cars is higher than previous value
     if (totalCars > fields.length) {
       for (let i = fields.length; i < totalCars; i++) {
         inputs.push({ carBrand: "BMW", carModel: "" });
@@ -68,46 +67,60 @@ const FormStepThree = (props) => {
     }
   }, [totalCars]);
 
-  const cars = fields.map((field, index) => (
-    <div key={field.id}>
-      <FormControl>
-        <InputLabel id={`carBrand-${index}-label`}>Car Brand</InputLabel>
-        <Select
-          labelId={`carBrand-${index}-label`}
-          {...register(`participantCars.${index}.carBrand`, { required: true })}
-          defaultValue={"BMW"}
-        >
-          <MenuItem value="Audi">Audi</MenuItem>
-          <MenuItem value="BMW">BMW</MenuItem>
-          <MenuItem value="Lexus">Lexus</MenuItem>
-          <MenuItem value="Mazda">Mazda</MenuItem>
-          <MenuItem value="Mercedes">Mercedes</MenuItem>
-          <MenuItem value="Tesla">Tesla</MenuItem>
-        </Select>
-      </FormControl>
+  const cars = fields.map((field, index) => {
+    const isBmw =
+      watch(`participantCars.${index}.carBrand`) === "BMW" ? true : false;
+    return (
+      <div key={field.id}>
+        <FormControl>
+          <InputLabel id={`carBrand-${index}-label`}>Car Brand</InputLabel>
+          <Select
+            labelId={`carBrand-${index}-label`}
+            {...register(`participantCars.${index}.carBrand`, {
+              required: true,
+            })}
+            defaultValue={"BMW"}
+          >
+            <MenuItem value="Audi">Audi</MenuItem>
+            <MenuItem value="BMW">BMW</MenuItem>
+            <MenuItem value="Lexus">Lexus</MenuItem>
+            <MenuItem value="Mazda">Mazda</MenuItem>
+            <MenuItem value="Mercedes">Mercedes</MenuItem>
+            <MenuItem value="Tesla">Tesla</MenuItem>
+          </Select>
+        </FormControl>
 
-      <TextField
-        defaultValue={field.carModel}
-        label={"Car Model"}
-        {...register(`participantCars.${index}.carModel`, {
-          required: "This field is required",
-          validate: {
-            carValidation: (value) =>
-              value[0].toLowerCase() === "m" || //starts with m
-              value[0].toLowerCase() === "x" || // starts with x
-              value[0].toLowerCase() === "z" || //starts with z
-              (parseInt(value) && value.length === 1) || // 1 number
-              (parseInt(value) && value.length === 3) || // 3 numbers
-              "Invalid Car Model", //Invalid message
-          },
-        })}
-      />
-      {errors.participantCars &&
-        (errors.participantCars[index] ? (
-          <span>{errors.participantCars[index].carModel.message}</span>
-        ) : null)}
-    </div>
-  ));
+        <TextField
+          defaultValue={field.carModel}
+          label={"Car Model"}
+          {...register(`participantCars.${index}.carModel`, {
+            required: "This field is required",
+            validate: {
+              carValidation: (value) => {
+                // No validation if brand is not BMW
+                if (isBmw) {
+                  console.log(isBmw);
+                  return (
+                    value[0].toLowerCase() === "m" || //starts with m
+                    value[0].toLowerCase() === "x" || // starts with x
+                    value[0].toLowerCase() === "z" || //starts with z
+                    (parseInt(value) && value.length === 1) || // 1 number
+                    (parseInt(value) && value.length === 3) || // 3 numbers
+                    "Invalid Car Model"
+                  );
+                  //Invalid message
+                }
+              },
+            },
+          })}
+        />
+        {errors.participantCars &&
+          (errors.participantCars[index] ? (
+            <span>{errors.participantCars[index].carModel.message}</span>
+          ) : null)}
+      </div>
+    );
+  });
 
   return (
     <Container>

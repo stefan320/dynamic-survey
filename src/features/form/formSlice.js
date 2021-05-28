@@ -11,7 +11,7 @@ const initialState = {
   targetablesData: {
     careAboutEmissions: 0,
     fwdOrIdk: 0,
-    ammountOfCars: 0,
+    amountOfCars: 0,
   },
   currentUser: {
     age: "",
