@@ -61,10 +61,11 @@ const FormStart = (props) => {
             className={classes.Form}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
+            <FormLabel id="age-label">Age</FormLabel>
             <TextField
               type="number"
+              labelId="age-label"
               id="age"
-              label="Age"
               {...register("age", {
                 required: {
                   value: true,

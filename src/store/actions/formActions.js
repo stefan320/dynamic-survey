@@ -31,7 +31,6 @@ export const isFirstTimer = (isFirstTimer) => {
 };
 
 export const targetableParticipant = (data) => {
-  console.log(data.emissions === "yes" ? 1 : 0);
   const targetablesData = {
     careAboutEmissions: data.emissions === "yes" ? 1 : 0,
     fwdOrIdk: data.drivetrain === "fwd" || data.drivetrain === "idk" ? 1 : 0,

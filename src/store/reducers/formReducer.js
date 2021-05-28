@@ -29,7 +29,6 @@ const initialState = {
 const formReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.MINOR_PARTICIPANT:
-      console.log(state, action);
       return {
         ...state,
         participants: {

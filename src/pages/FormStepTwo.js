@@ -23,8 +23,6 @@ const FormStepTwo = (props) => {
     formState: { errors },
   } = useForm();
 
-  // const history = useHistory();
-
   // Iputs State
   const [drivingLicense, setDrivingLicense] = useState("no");
   const [isFirstCar, setIsFirstCar] = useState("no");
@@ -35,8 +33,6 @@ const FormStepTwo = (props) => {
   const classes = useStyles();
 
   const onSubmit = (data) => {
-    console.log("SUBMITT");
-
     if (drivingLicense === "no") {
       setModalMsg("Thank you for your interest.");
       setModalState(true);
@@ -142,7 +138,6 @@ const FormStepTwo = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.formReducer.currentUser);
   const participant = {
     participantAge: state.formReducer.currentUser.age,
   };

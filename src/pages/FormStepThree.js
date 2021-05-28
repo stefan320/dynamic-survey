@@ -30,9 +30,7 @@ const FormStepThree = (props) => {
   const [drivetrain, setDriveTrain] = useState("rwd");
   const [emmisionsConcerned, setEmissions] = useState("no");
   const [totalCars, setTotalCars] = useState("");
-  const [carModels, setCarModels] = useState(null);
 
-  const [errorState, setErrorState] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
@@ -112,7 +110,6 @@ const FormStepThree = (props) => {
               carValidation: (value) => {
                 // No validation if brand is not BMW
                 if (isBmw) {
-                  console.log(isBmw);
                   return (
                     value[0].toLowerCase() === "m" || //starts with m
                     value[0].toLowerCase() === "x" || // starts with x
@@ -129,7 +126,9 @@ const FormStepThree = (props) => {
         />
         {errors.participantCars &&
           (errors.participantCars[index] ? (
-            <span>{errors.participantCars[index].carModel.message}</span>
+            <Typography paragraph color="error">
+              {errors.participantCars[index].carModel.message}
+            </Typography>
           ) : null)}
         <br />
       </>
@@ -170,7 +169,9 @@ const FormStepThree = (props) => {
                 <MenuItem value="fwd">Front Wheel Drive</MenuItem>
                 <MenuItem value="idk">I don't know</MenuItem>
               </Select>
-              {errors.isLicensed && <span>This Field is required</span>}
+              {errors.drivetrain && (
+                <Typography color="error">This Field is required</Typography>
+              )}
             </FormControl>
             <br />
             <FormControl>
@@ -189,11 +190,13 @@ const FormStepThree = (props) => {
                 <MenuItem value="yes">Yes</MenuItem>
                 <MenuItem value="no">No</MenuItem>
               </Select>
-              {errors.isLicensed && <span>This Field is required</span>}
+              {errors.emissions && (
+                <Typography color="error">This Field is required</Typography>
+              )}
             </FormControl>
             <br />
             <FormLabel htmlFor={"totalCars"}>
-              Are you worried about emissions?
+              How many cars do you have in your family?
             </FormLabel>
             <br />
             <TextField
@@ -206,7 +209,7 @@ const FormStepThree = (props) => {
             />
             <br />
             {cars}
-            <Button type="submit" color="primary">
+            <Button type="submit" color="primary" variant="outlined">
               Continue
             </Button>
           </form>

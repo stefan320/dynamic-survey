@@ -23,9 +23,7 @@ const Statistics = (props) => {
       (accumulator, currentValue) => accumulator + currentValue,
       0
     );
-
     const average = sumOfValues / valuesArr.length;
-    console.log(average);
     return +average.toFixed(2);
   };
 
@@ -65,7 +63,7 @@ const Statistics = (props) => {
 
   return (
     <Container>
-      <Typography variant="h3">Statistics</Typography>
+      <Typography variant="h5">Statistics</Typography>
       <List>
         <ListItem>
           {`${props.participants.underEighteen} adolescents participated in the
@@ -84,7 +82,7 @@ const Statistics = (props) => {
         </ListItem>
       </List>
 
-      <Typography variant="h4">
+      <Typography variant="h6">
         A breakdown of each respondent group by percentage
       </Typography>
 
@@ -104,21 +102,20 @@ const Statistics = (props) => {
         </ListItem>
       </List>
 
-      <Typography variant="h4">Targetables Info</Typography>
+      <Typography variant="h6">Targetables Info</Typography>
       <List>
         <ListItem>{`${percentages.careAboutEmissions} of targetables cares about fuel emissions.`}</ListItem>
         <ListItem>{`${percentages.fwdOrIdk} of targetables chose FWD or I don't know as prefered drivetrain.`}</ListItem>
         <ListItem>{`Average amount of cars in a family is ${averages.familyCars}`}</ListItem>
       </List>
 
-      <Typography variant="h4">Car and models distribution</Typography>
+      <Typography variant="h6">Car and models distribution</Typography>
       {carDistribution}
     </Container>
   );
 };
 
 const mapStateToProps = (state) => {
-  console.log(state);
   const statsState = {
     participants: state.formReducer.participants,
     targetablesData: state.formReducer.targetablesData,
