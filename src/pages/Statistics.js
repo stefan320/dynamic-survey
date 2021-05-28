@@ -44,6 +44,21 @@ const Statistics = (props) => {
     ),
   };
 
+  const carDistribution =
+    props.targetablesData.cars.length > 0 ? (
+      <List>
+        {props.targetablesData.cars.map((car, i) => {
+          return (
+            <ListItem key={i}>
+              Car Brand: {car.carBrand}, Model: {car.carModel}
+            </ListItem>
+          );
+        })}
+      </List>
+    ) : (
+      <Typography paragraph>No car models have been submited yet.</Typography>
+    );
+
   const averages = {
     familyCars: calculateAverage(props.targetablesData.amountOfCars),
   };
@@ -95,6 +110,9 @@ const Statistics = (props) => {
         <ListItem>{`${percentages.fwdOrIdk} of targetables chose FWD or I don't know as prefered drivetrain.`}</ListItem>
         <ListItem>{`Average amount of cars in a family is ${averages.familyCars}`}</ListItem>
       </List>
+
+      <Typography variant="h4">Car and models distribution</Typography>
+      {carDistribution}
     </Container>
   );
 };

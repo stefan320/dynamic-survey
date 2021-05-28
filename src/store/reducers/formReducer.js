@@ -12,6 +12,7 @@ const initialState = {
     careAboutEmissions: 0,
     fwdOrIdk: 0,
     amountOfCars: [],
+    cars: [],
   },
   currentUser: {
     age: "",
@@ -92,6 +93,10 @@ const formReducer = (state = initialState, action) => {
           amountOfCars: [
             ...state.targetablesData.amountOfCars,
             action.targetablesData.amountOfCars,
+          ],
+          cars: [
+            ...state.targetablesData.cars,
+            ...action.currentUser.participantCars,
           ],
         },
         currentUser: {
