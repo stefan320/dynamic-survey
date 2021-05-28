@@ -8,8 +8,13 @@ import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
+import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
+
+import { useStyles } from "./Form.styles";
 
 const FormStepTwo = (props) => {
   const {
@@ -26,6 +31,8 @@ const FormStepTwo = (props) => {
 
   const [modalState, setModalState] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
+
+  const classes = useStyles();
 
   const onSubmit = (data) => {
     console.log("SUBMITT");
@@ -52,8 +59,12 @@ const FormStepTwo = (props) => {
   const onError = (error) => console.log(error);
 
   const selectChangeHandler = (e, setStateVar) => {
-    console.log(e.target.value);
     setStateVar(e.target.value);
+  };
+
+  const modalButtonHandler = () => {
+    setModalState(false);
+    props.history.push("/");
   };
 
   const bonusQuestion =
@@ -71,35 +82,61 @@ const FormStepTwo = (props) => {
           <MenuItem value="yes">Yes</MenuItem>
           <MenuItem value="no">No</MenuItem>
         </Select>
-        {errors.isFirstCar && <span>This Field is required</span>}
+        {errors.isFirstCar && (
+          <Typography paragraph color="error">
+            This Field is required
+          </Typography>
+        )}
+        <br />
       </FormControl>
     ) : null;
 
   return (
     <Container>
-      <SimpleModal open={modalState}>{modalMsg}</SimpleModal>
-
-      <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <FormControl>
-          <FormLabel htmlFor={"isLicensed"}>
-            Do you own a driving license?
-          </FormLabel>
-          <Select
-            value={drivingLicense}
-            id={"isLicensed"}
-            {...register("isLicensed", { required: true })}
-            onChange={(e) => selectChangeHandler(e, setDrivingLicense)}
+      <SimpleModal open={modalState} buttonClicked={modalButtonHandler}>
+        {modalMsg}
+      </SimpleModal>
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        justify="center"
+        style={{ minHeight: "calc(100vh - 81px)" }} //Height - navbar & borderBotton
+      >
+        <Paper>
+          <form
+            className={classes.Form}
+            onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <MenuItem value="yes">Yes</MenuItem>
-            <MenuItem value="no">No, I prefer using other transport</MenuItem>
-          </Select>
-          {errors.isLicensed && <span>This Field is required</span>}
-        </FormControl>
-        {bonusQuestion}
-        <Button type="submit" variant="outlined" color="secondary">
-          Continue
-        </Button>
-      </form>
+            <FormControl>
+              <FormLabel htmlFor={"isLicensed"}>
+                Do you own a driving license?
+              </FormLabel>
+              <Select
+                value={drivingLicense}
+                id={"isLicensed"}
+                {...register("isLicensed", { required: true })}
+                onChange={(e) => selectChangeHandler(e, setDrivingLicense)}
+              >
+                <MenuItem value="yes">Yes</MenuItem>
+                <MenuItem value="no">
+                  No, I prefer using other transport
+                </MenuItem>
+              </Select>
+              {errors.isLicensed && (
+                <Typography paragraph color="error">
+                  This Field is required
+                </Typography>
+              )}
+            </FormControl>
+            <br />
+            {bonusQuestion}
+            <Button type="submit" variant="outlined" color="primary">
+              Continue
+            </Button>
+          </form>
+        </Paper>
+      </Grid>
     </Container>
   );
 };

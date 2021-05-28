@@ -7,10 +7,15 @@ import SimpleModal from "../components/Modal/Modal";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
+import FormLabel from "@material-ui/core/FormLabel";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+
+import { useStyles } from "./Form.styles";
 
 const FormStepThree = (props) => {
   const {
@@ -35,6 +40,8 @@ const FormStepThree = (props) => {
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "participantCars", // unique name for your Field Array
   });
+
+  const classes = useStyles();
 
   const onSubmit = (data) => {
     props.targetableParticipant(data);
@@ -67,13 +74,18 @@ const FormStepThree = (props) => {
     }
   }, [totalCars]);
 
+  const modalButtonHandler = () => {
+    setModalState(false);
+    props.history.push("/");
+  };
+
   const cars = fields.map((field, index) => {
     const isBmw =
       watch(`participantCars.${index}.carBrand`) === "BMW" ? true : false;
     return (
-      <div key={field.id}>
-        <FormControl>
-          <InputLabel id={`carBrand-${index}-label`}>Car Brand</InputLabel>
+      <>
+        <FormControl key={field.id}>
+          <FormLabel id={`carBrand-${index}-label`}>Car Brand</FormLabel>
           <Select
             labelId={`carBrand-${index}-label`}
             {...register(`participantCars.${index}.carBrand`, {
@@ -89,10 +101,11 @@ const FormStepThree = (props) => {
             <MenuItem value="Tesla">Tesla</MenuItem>
           </Select>
         </FormControl>
-
+        <br />
+        <FormLabel id={`carModel-${index}-label`}>Car Model</FormLabel>
         <TextField
           defaultValue={field.carModel}
-          label={"Car Model"}
+          labelId={`carModel-${index}-label`}
           {...register(`participantCars.${index}.carModel`, {
             required: "This field is required",
             validate: {
@@ -118,63 +131,87 @@ const FormStepThree = (props) => {
           (errors.participantCars[index] ? (
             <span>{errors.participantCars[index].carModel.message}</span>
           ) : null)}
-      </div>
+        <br />
+      </>
     );
   });
 
   return (
     <Container>
-      <SimpleModal open={modalState}>{modalMsg}</SimpleModal>
-      <form onSubmit={handleSubmit(onSubmit, onError)}>
-        <FormControl>
-          <InputLabel id={"drivetrain-label"}>
-            Which drivetrain do you prefer?
-          </InputLabel>
-          <Select
-            value={drivetrain}
-            labelId={"drivetrain-label"}
-            id={"drivetrain"}
-            {...register("drivetrain", { required: true })}
-            color={"secondary"}
-            onChange={(e) => inputChangeHandler(e, setDriveTrain)}
+      <SimpleModal open={modalState} buttonClicked={modalButtonHandler}>
+        {modalMsg}
+      </SimpleModal>
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        justify="center"
+        style={{ minHeight: "calc(100vh - 81px)" }} //Height - navbar & borderBotton
+      >
+        <Paper>
+          <form
+            className={classes.Form}
+            onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
-            <MenuItem value="fwd">Front Wheel Drive</MenuItem>
-            <MenuItem value="idk">I don't know</MenuItem>
-          </Select>
-          {errors.isLicensed && <span>This Field is required</span>}
-        </FormControl>
-        <FormControl>
-          <InputLabel id={"emissions-label"}>
-            Are you worried about emissions?
-          </InputLabel>
-          <Select
-            value={emmisionsConcerned}
-            labelId={"emissions-label"}
-            id={"emissions"}
-            {...register("emissions", { required: true })}
-            color={"secondary"}
-            onChange={(e) => inputChangeHandler(e, setEmissions)}
-          >
-            <MenuItem value="yes">Yes</MenuItem>
-            <MenuItem value="no">No</MenuItem>
-          </Select>
-          {errors.isLicensed && <span>This Field is required</span>}
-        </FormControl>
-        <TextField
-          id="totalCars"
-          type="number"
-          min="0"
-          label="How many cars do you have in your family?"
-          {...register("totalCars", { required: true })}
-          onChange={(e) => inputChangeHandler(e, setTotalCars)}
-          value={totalCars >= 0 ? totalCars : ""}
-        />
-        {cars}
-        <Button type="submit" variant="outlined" color="secondary">
-          Continue
-        </Button>
-      </form>
+            <FormControl>
+              <FormLabel id={"drivetrain-label"}>
+                Which drivetrain do you prefer?
+              </FormLabel>
+              <br />
+              <Select
+                value={drivetrain}
+                labelId={"drivetrain-label"}
+                id={"drivetrain"}
+                {...register("drivetrain", { required: true })}
+                color={"secondary"}
+                onChange={(e) => inputChangeHandler(e, setDriveTrain)}
+              >
+                <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
+                <MenuItem value="fwd">Front Wheel Drive</MenuItem>
+                <MenuItem value="idk">I don't know</MenuItem>
+              </Select>
+              {errors.isLicensed && <span>This Field is required</span>}
+            </FormControl>
+            <br />
+            <FormControl>
+              <FormLabel id={"emissions-label"}>
+                Are you worried about emissions?
+              </FormLabel>
+              <br />
+              <Select
+                value={emmisionsConcerned}
+                labelId={"emissions-label"}
+                id={"emissions"}
+                {...register("emissions", { required: true })}
+                color={"secondary"}
+                onChange={(e) => inputChangeHandler(e, setEmissions)}
+              >
+                <MenuItem value="yes">Yes</MenuItem>
+                <MenuItem value="no">No</MenuItem>
+              </Select>
+              {errors.isLicensed && <span>This Field is required</span>}
+            </FormControl>
+            <br />
+            <FormLabel htmlFor={"totalCars"}>
+              Are you worried about emissions?
+            </FormLabel>
+            <br />
+            <TextField
+              id="totalCars"
+              type="number"
+              min="0"
+              {...register("totalCars", { required: true })}
+              onChange={(e) => inputChangeHandler(e, setTotalCars)}
+              value={totalCars >= 0 ? totalCars : ""}
+            />
+            <br />
+            {cars}
+            <Button type="submit" color="primary">
+              Continue
+            </Button>
+          </form>
+        </Paper>
+      </Grid>
     </Container>
   );
 };
