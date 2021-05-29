@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
 import SimpleModal from "../components/Modal/Modal";
@@ -58,7 +58,7 @@ const FormStepThree = (props) => {
     //  if the amount of cars is higher than previous value
     if (totalCars > fields.length) {
       for (let i = fields.length; i < totalCars; i++) {
-        inputs.push({ carBrand: "BMW", carModel: "" });
+        inputs.push({ carBrand: "", carModel: "" });
       }
       append(inputs);
     } else {
@@ -81,29 +81,44 @@ const FormStepThree = (props) => {
     const isBmw =
       watch(`participantCars.${index}.carBrand`) === "BMW" ? true : false;
     return (
-      <>
-        <FormControl key={field.id}>
+      <Grid key={field.id} container direction="column">
+        <FormControl>
           <FormLabel id={`carBrand-${index}-label`}>Car Brand</FormLabel>
-          <Select
-            labelId={`carBrand-${index}-label`}
-            {...register(`participantCars.${index}.carBrand`, {
-              required: true,
-            })}
-            defaultValue={"BMW"}
-          >
-            <MenuItem value="Audi">Audi</MenuItem>
-            <MenuItem value="BMW">BMW</MenuItem>
-            <MenuItem value="Lexus">Lexus</MenuItem>
-            <MenuItem value="Mazda">Mazda</MenuItem>
-            <MenuItem value="Mercedes">Mercedes</MenuItem>
-            <MenuItem value="Tesla">Tesla</MenuItem>
-          </Select>
+          <Controller
+            control={control}
+            name={`participantCars.${index}.carBrand`}
+            rules={{ required: "This field is required" }}
+            defaultValue=""
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Select
+                id={`participantCars.${index}.carBrand`}
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+              >
+                <MenuItem value="Audi">Audi</MenuItem>
+                <MenuItem value="BMW">BMW</MenuItem>
+                <MenuItem value="Lexus">Lexus</MenuItem>
+                <MenuItem value="Mazda">Mazda</MenuItem>
+                <MenuItem value="Mercedes">Mercedes</MenuItem>
+                <MenuItem value="Tesla">Tesla</MenuItem>
+              </Select>
+            )}
+          />
         </FormControl>
+        {errors.participantCars &&
+        errors.participantCars[index] &&
+        errors.participantCars[index].carBrand ? (
+          <Typography color="error">
+            {errors.participantCars[index].carBrand.message}
+          </Typography>
+        ) : null}
+
         <br />
-        <FormLabel id={`carModel-${index}-label`}>Car Model</FormLabel>
+        <FormLabel htmlFor={`carModel-${index}`}>Car Model</FormLabel>
         <TextField
           defaultValue={field.carModel}
-          labelId={`carModel-${index}-label`}
+          id={`carModel-${index}`}
           {...register(`participantCars.${index}.carModel`, {
             required: "This field is required",
             validate: {
@@ -125,13 +140,14 @@ const FormStepThree = (props) => {
           })}
         />
         {errors.participantCars &&
-          (errors.participantCars[index] ? (
-            <Typography paragraph color="error">
+          (errors.participantCars[index] &&
+          errors.participantCars[index].carModel ? (
+            <Typography color="error">
               {errors.participantCars[index].carModel.message}
             </Typography>
           ) : null)}
         <br />
-      </>
+      </Grid>
     );
   });
 
@@ -153,43 +169,60 @@ const FormStepThree = (props) => {
             onSubmit={handleSubmit(onSubmit, onError)}
           >
             <FormControl>
-              <FormLabel id={"drivetrain-label"}>
+              <FormLabel htmlFor="drivetrain">
                 Which drivetrain do you prefer?
               </FormLabel>
               <br />
-              <Select
-                value={drivetrain}
-                labelId={"drivetrain-label"}
-                id={"drivetrain"}
-                {...register("drivetrain", { required: true })}
-                color={"secondary"}
-                onChange={(e) => inputChangeHandler(e, setDriveTrain)}
-              >
-                <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
-                <MenuItem value="fwd">Front Wheel Drive</MenuItem>
-                <MenuItem value="idk">I don't know</MenuItem>
-              </Select>
+              <Controller
+                control={control}
+                id="drivetrain"
+                name="drivetrain"
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Select
+                    value={value}
+                    id={"drivetrain"}
+                    color={"secondary"}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                  >
+                    <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
+                    <MenuItem value="fwd">Front Wheel Drive</MenuItem>
+                    <MenuItem value="idk">I don't know</MenuItem>
+                  </Select>
+                )}
+              />
+
               {errors.drivetrain && (
                 <Typography color="error">This Field is required</Typography>
               )}
             </FormControl>
             <br />
             <FormControl>
-              <FormLabel id={"emissions-label"}>
+              <FormLabel htmlFor={"emissions"}>
                 Are you worried about emissions?
               </FormLabel>
               <br />
-              <Select
-                value={emmisionsConcerned}
-                labelId={"emissions-label"}
-                id={"emissions"}
-                {...register("emissions", { required: true })}
-                color={"secondary"}
-                onChange={(e) => inputChangeHandler(e, setEmissions)}
-              >
-                <MenuItem value="yes">Yes</MenuItem>
-                <MenuItem value="no">No</MenuItem>
-              </Select>
+              <Controller
+                control={control}
+                name={"emissions"}
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Select
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    id={"emissions"}
+                    color={"secondary"}
+                    inputRef={ref}
+                  >
+                    <MenuItem value="yes">Yes</MenuItem>
+                    <MenuItem value="no">No</MenuItem>
+                  </Select>
+                )}
+              />
               {errors.emissions && (
                 <Typography color="error">This Field is required</Typography>
               )}
