@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
 import { useStyles } from "./Form.styles";
@@ -22,6 +22,7 @@ const FormStart = (props) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm();
 
@@ -61,10 +62,10 @@ const FormStart = (props) => {
             className={classes.Form}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <FormLabel id="age-label">Age</FormLabel>
+            <FormLabel htmlFor="age">Age</FormLabel>
             <TextField
               type="number"
-              labelId="age-label"
+              // labelId="age-label"
               id="age"
               {...register("age", {
                 required: {
@@ -80,18 +81,26 @@ const FormStart = (props) => {
             )}
             <br />
             <FormControl>
-              <FormLabel htmlFor={"isLicensed"}>
-                Do you own a driving license?
-              </FormLabel>
-              <Select
-                id={"gender"}
-                {...register("gender", { required: true })}
-                defaultValue="other"
-              >
-                <MenuItem value="male">Male</MenuItem>
-                <MenuItem value="female">Female</MenuItem>
-                <MenuItem value="other">Other</MenuItem>
-              </Select>
+              <FormLabel htmlFor={"gender"}>Gender</FormLabel>
+              <Controller
+                control={control}
+                name="gender"
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Select
+                    id={"gender"}
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    inputRef={ref}
+                  >
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </Select>
+                )}
+              />
               {errors.gender && (
                 <Typography color="error">This Field is required</Typography>
               )}
