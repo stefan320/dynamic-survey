@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
 import SimpleModal from "../components/Modal/Modal";
@@ -18,14 +18,11 @@ import { useStyles } from "./Form.styles";
 
 const FormStepTwo = (props) => {
   const {
-    register,
     handleSubmit,
+    watch,
+    control,
     formState: { errors },
   } = useForm();
-
-  // Iputs State
-  const [drivingLicense, setDrivingLicense] = useState("no");
-  const [isFirstCar, setIsFirstCar] = useState("no");
 
   const [modalState, setModalState] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
@@ -33,14 +30,15 @@ const FormStepTwo = (props) => {
   const classes = useStyles();
 
   const onSubmit = (data) => {
-    if (drivingLicense === "no") {
+    console.log(data);
+    if (data.isLicensed === "no") {
       setModalMsg("Thank you for your interest.");
       setModalState(true);
       props.isParticipantLicensed(false);
       return;
     }
 
-    if (isFirstCar === "yes") {
+    if (data.isFirstCar === "yes") {
       props.isFirstTimer(true);
       setModalMsg(
         "We are targeting more experienced clients, thank you for your interest."
@@ -48,15 +46,11 @@ const FormStepTwo = (props) => {
       setModalState(true);
       return;
     } else {
-      // first car = "no" & licensed OR licensed over 25
+      // first car = "no" & age over 25
       props.history.push("/step-three");
     }
   };
   const onError = (error) => console.log(error);
-
-  const selectChangeHandler = (e, setStateVar) => {
-    setStateVar(e.target.value);
-  };
 
   const modalButtonHandler = () => {
     setModalState(false);
@@ -64,20 +58,27 @@ const FormStepTwo = (props) => {
   };
 
   const bonusQuestion =
-    props.participantAge >= 18 &&
-    props.participantAge <= 25 &&
-    drivingLicense === "yes" ? (
+    props.participantAge <= 25 && watch("isLicensed") === "yes" ? (
       <FormControl>
         <FormLabel htmlFor={"isFirstCar"}>Is this your first car?</FormLabel>
-        <Select
-          id={"isFirstCar"}
-          {...register("isFirstCar", { required: true })}
-          value={isFirstCar}
-          onChange={(e) => selectChangeHandler(e, setIsFirstCar)}
-        >
-          <MenuItem value="yes">Yes</MenuItem>
-          <MenuItem value="no">No</MenuItem>
-        </Select>
+        <Controller
+          control={control}
+          name="isFirstCar"
+          rules={{ required: true }}
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Select
+              onBlur={onBlur}
+              id={"isFirstCar"}
+              onChange={onChange}
+              inputRef={ref}
+              value={value}
+            >
+              <MenuItem value="yes">Yes</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </Select>
+          )}
+        />
         {errors.isFirstCar && (
           <Typography paragraph color="error">
             This Field is required
@@ -108,23 +109,30 @@ const FormStepTwo = (props) => {
               <FormLabel htmlFor={"isLicensed"}>
                 Do you own a driving license?
               </FormLabel>
-              <Select
-                value={drivingLicense}
-                id={"isLicensed"}
-                {...register("isLicensed", { required: true })}
-                onChange={(e) => selectChangeHandler(e, setDrivingLicense)}
-              >
-                <MenuItem value="yes">Yes</MenuItem>
-                <MenuItem value="no">
-                  No, I prefer using other transport
-                </MenuItem>
-              </Select>
-              {errors.isLicensed && (
-                <Typography paragraph color="error">
-                  This Field is required
-                </Typography>
-              )}
+              <Controller
+                control={control}
+                name="isLicensed"
+                rules={{ required: true }}
+                defaultValue=""
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Select
+                    value={value}
+                    id={"isLicensed"}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    inputRef={ref}
+                  >
+                    <MenuItem value="yes">Yes</MenuItem>
+                    <MenuItem value="no">
+                      No, I prefer using other transport
+                    </MenuItem>
+                  </Select>
+                )}
+              />
             </FormControl>
+            {errors.isLicensed && (
+              <Typography color="error">This Field is required</Typography>
+            )}
             <br />
             {bonusQuestion}
             <Button type="submit" variant="outlined" color="primary">

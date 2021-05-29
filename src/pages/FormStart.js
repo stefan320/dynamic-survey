@@ -76,9 +76,7 @@ const FormStart = (props) => {
               })}
             />
             {errors.age && (
-              <Typography paragraph color="error">
-                {errors.age.message}
-              </Typography>
+              <Typography color="error">{errors.age.message}</Typography>
             )}
             <br />
             <FormControl>
@@ -95,9 +93,7 @@ const FormStart = (props) => {
                 <MenuItem value="other">Other</MenuItem>
               </Select>
               {errors.gender && (
-                <Typography paragraph color="error">
-                  This Field is required
-                </Typography>
+                <Typography color="error">This Field is required</Typography>
               )}
             </FormControl>
             <br />

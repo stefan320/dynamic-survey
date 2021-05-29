@@ -13,7 +13,7 @@ const Navigation = (props) => {
         fontWeight={700}
         component={NavLink}
         to="/"
-        className={[classes.ButtonMarginR, classes.Button]}
+        className={`${classes.ButtonMarginR} ${classes.Button}`}
       >
         Home
       </Button>
