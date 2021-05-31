@@ -26,10 +26,6 @@ const FormStepThree = (props) => {
     formState: { errors },
   } = useForm();
 
-  // Iputs State
-
-  const [totalCars, setTotalCars] = useState("");
-
   const [alertDialogState, setAlertDialogState] = useState(false);
   const [alertDialogMsg, setDialogMsg] = useState("");
 
@@ -39,6 +35,7 @@ const FormStepThree = (props) => {
   });
 
   const classes = useStyles();
+  const totalCars = watch("totalCars");
 
   const onSubmit = (data) => {
     props.targetableParticipant(data);
@@ -48,12 +45,9 @@ const FormStepThree = (props) => {
 
   const onError = (error) => console.error(error);
 
-  const inputChangeHandler = (e, setStateVar) => {
-    setStateVar(e.target.value);
-  };
-
   useEffect(() => {
     const inputs = [];
+
     //  if the amount of cars is higher than previous value
     if (totalCars > fields.length) {
       for (let i = fields.length; i < totalCars; i++) {
@@ -237,11 +231,18 @@ const FormStepThree = (props) => {
             <TextField
               id="totalCars"
               type="number"
-              min="0"
-              {...register("totalCars", { required: true })}
-              onChange={(e) => inputChangeHandler(e, setTotalCars)}
-              value={totalCars >= 0 ? totalCars : ""}
+              {...register("totalCars", {
+                required: "This Field is required",
+                min: {
+                  value: 0,
+                  message: "Invalid number",
+                },
+              })}
             />
+            {console.log(errors)}
+            {errors.totalCars && (
+              <Typography color="error">{errors.totalCars.message}</Typography>
+            )}
             <br />
             {cars}
             <Button type="submit" color="primary" variant="outlined">

@@ -68,13 +68,9 @@ const FormStart = (props) => {
             <FormLabel htmlFor="age">Age</FormLabel>
             <TextField
               type="number"
-              // labelId="age-label"
               id="age"
               {...register("age", {
-                required: {
-                  value: true,
-                  message: "This Field is required",
-                },
+                required: "This Field is required",
                 min: { value: 0, message: "Invalid Age" },
                 max: { value: 100, message: "Invalid Age" },
               })}
