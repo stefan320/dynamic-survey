@@ -66,14 +66,25 @@ const FormStart = (props) => {
             onSubmit={handleSubmit(onSubmit, onError)}
           >
             <FormLabel htmlFor="age">Age</FormLabel>
-            <TextField
-              type="number"
-              id="age"
-              {...register("age", {
+            <Controller
+              control={control}
+              name="age"
+              rules={{
                 required: "This Field is required",
                 min: { value: 0, message: "Invalid Age" },
                 max: { value: 100, message: "Invalid Age" },
-              })}
+              }}
+              defaultValue=""
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <TextField
+                  type="number"
+                  id={"age"}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  inputRef={ref}
+                />
+              )}
             />
             {errors.age && (
               <Typography color="error">{errors.age.message}</Typography>

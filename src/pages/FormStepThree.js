@@ -109,10 +109,10 @@ const FormStepThree = (props) => {
 
         <br />
         <FormLabel htmlFor={`carModel-${index}`}>Car Model</FormLabel>
-        <TextField
-          defaultValue={field.carModel}
-          id={`carModel-${index}`}
-          {...register(`participantCars.${index}.carModel`, {
+        <Controller
+          control={control}
+          name={`participantCars.${index}.carModel`}
+          rules={{
             required: "This field is required",
             validate: {
               carValidation: (value) => {
@@ -130,8 +130,18 @@ const FormStepThree = (props) => {
                 }
               },
             },
-          })}
+          }}
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              id={`carModel-${index}`}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
         />
+        {console.log(errors)}
         {errors.participantCars &&
           (errors.participantCars[index] &&
           errors.participantCars[index].carModel ? (
@@ -228,18 +238,28 @@ const FormStepThree = (props) => {
               How many cars do you have in your family?
             </FormLabel>
             <br />
-            <TextField
+            <Controller
+              control={control}
               id="totalCars"
-              type="number"
-              {...register("totalCars", {
+              name="totalCars"
+              rules={{
                 required: "This Field is required",
                 min: {
                   value: 0,
                   message: "Invalid number",
                 },
-              })}
+              }}
+              defaultValue=""
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <TextField
+                  type="number"
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  inputRef={ref}
+                />
+              )}
             />
-            {console.log(errors)}
             {errors.totalCars && (
               <Typography color="error">{errors.totalCars.message}</Typography>
             )}
