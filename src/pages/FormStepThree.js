@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
-import SimpleModal from "../components/Modal/Modal";
+import AlertDialog from "../components/AlertDialog/AlertDialog";
 
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -27,12 +27,11 @@ const FormStepThree = (props) => {
   } = useForm();
 
   // Iputs State
-  const [drivetrain, setDriveTrain] = useState("rwd");
-  const [emmisionsConcerned, setEmissions] = useState("no");
+
   const [totalCars, setTotalCars] = useState("");
 
-  const [modalState, setModalState] = useState(false);
-  const [modalMsg, setModalMsg] = useState("");
+  const [alertDialogState, setAlertDialogState] = useState(false);
+  const [alertDialogMsg, setDialogMsg] = useState("");
 
   const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
@@ -43,8 +42,8 @@ const FormStepThree = (props) => {
 
   const onSubmit = (data) => {
     props.targetableParticipant(data);
-    setModalMsg("Survey complete. Thank you for your feedback.");
-    setModalState(true);
+    setDialogMsg("Survey complete. Thank you for your feedback.");
+    setAlertDialogState(true);
   };
 
   const onError = (error) => console.error(error);
@@ -72,8 +71,8 @@ const FormStepThree = (props) => {
     }
   }, [totalCars]);
 
-  const modalButtonHandler = () => {
-    setModalState(false);
+  const dialogButtonHandler = () => {
+    setAlertDialogState(false);
     props.history.push("/");
   };
 
@@ -153,9 +152,12 @@ const FormStepThree = (props) => {
 
   return (
     <Container>
-      <SimpleModal open={modalState} buttonClicked={modalButtonHandler}>
-        {modalMsg}
-      </SimpleModal>
+      <AlertDialog
+        open={alertDialogState}
+        dialogButtonHandler={dialogButtonHandler}
+      >
+        {alertDialogMsg}
+      </AlertDialog>
       <Grid
         container
         direction="column"

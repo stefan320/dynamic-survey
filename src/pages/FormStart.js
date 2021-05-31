@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
 import { useStyles } from "./Form.styles";
 
-import SimpleModal from "../components/Modal/Modal";
+import AlertDialog from "../components/AlertDialog/AlertDialog";
 
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -26,14 +26,14 @@ const FormStart = (props) => {
     formState: { errors },
   } = useForm();
 
-  const [modalState, setModalState] = useState(false);
-  const [modalMsg, setModalMsg] = useState("");
+  const [alertDialogState, setAlertDialogState] = useState(false);
+  const [alertDialogMsg, setAlertDialogMsg] = useState("");
 
   const onSubmit = (data) => {
     if (data.age < 18) {
       props.addMinorParticipant(data.age);
-      setModalMsg("Thank you for your interest.");
-      setModalState(true);
+      setAlertDialogMsg("Thank you for your interest.");
+      setAlertDialogState(true);
     } else {
       props.addAdultParticipant(data.age);
       props.history.push("/step-two");
@@ -41,15 +41,18 @@ const FormStart = (props) => {
   };
   const onError = (error) => console.log(error);
 
-  const modalButtonHandler = () => {
-    setModalState(false);
+  const dialogButtonHandler = () => {
+    setAlertDialogState(false);
   };
 
   return (
     <Container>
-      <SimpleModal open={modalState} buttonClicked={modalButtonHandler}>
-        {modalMsg}
-      </SimpleModal>
+      <AlertDialog
+        open={alertDialogState}
+        dialogButtonHandler={dialogButtonHandler}
+      >
+        {alertDialogMsg}
+      </AlertDialog>
       <Grid
         container
         direction="column"

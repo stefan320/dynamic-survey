@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { connect } from "react-redux";
 import * as actionCreators from "../store/actions/formActions";
-import SimpleModal from "../components/Modal/Modal";
+import AlertDialog from "../components//AlertDialog/AlertDialog";
 
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -24,26 +24,25 @@ const FormStepTwo = (props) => {
     formState: { errors },
   } = useForm();
 
-  const [modalState, setModalState] = useState(false);
-  const [modalMsg, setModalMsg] = useState("");
+  const [alertDialogState, setDialogState] = useState(false);
+  const [alertDialogMsg, setDialogMsg] = useState("");
 
   const classes = useStyles();
 
   const onSubmit = (data) => {
-    console.log(data);
     if (data.isLicensed === "no") {
-      setModalMsg("Thank you for your interest.");
-      setModalState(true);
+      setDialogMsg("Thank you for your interest.");
+      setDialogState(true);
       props.isParticipantLicensed(false);
       return;
     }
 
     if (data.isFirstCar === "yes") {
       props.isFirstTimer(true);
-      setModalMsg(
+      setDialogMsg(
         "We are targeting more experienced clients, thank you for your interest."
       );
-      setModalState(true);
+      setDialogState(true);
       return;
     } else {
       // first car = "no" & age over 25
@@ -52,8 +51,8 @@ const FormStepTwo = (props) => {
   };
   const onError = (error) => console.log(error);
 
-  const modalButtonHandler = () => {
-    setModalState(false);
+  const dialogButtonHandler = () => {
+    setDialogState(false);
     props.history.push("/");
   };
 
@@ -90,9 +89,12 @@ const FormStepTwo = (props) => {
 
   return (
     <Container>
-      <SimpleModal open={modalState} buttonClicked={modalButtonHandler}>
-        {modalMsg}
-      </SimpleModal>
+      <AlertDialog
+        open={alertDialogState}
+        dialogButtonHandler={dialogButtonHandler}
+      >
+        {alertDialogMsg}
+      </AlertDialog>
       <Grid
         container
         direction="column"
