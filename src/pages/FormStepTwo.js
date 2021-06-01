@@ -7,7 +7,7 @@ import AlertDialog from "../components//AlertDialog/AlertDialog";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
+import InputLabel from "@material-ui/core/InputLabel";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
@@ -58,33 +58,37 @@ const FormStepTwo = (props) => {
 
   const bonusQuestion =
     props.participantAge <= 25 && watch("isLicensed") === "yes" ? (
-      <FormControl>
-        <FormLabel htmlFor={"isFirstCar"}>Is this your first car?</FormLabel>
-        <Controller
-          control={control}
-          name="isFirstCar"
-          rules={{ required: true }}
-          defaultValue=""
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Select
-              onBlur={onBlur}
-              id={"isFirstCar"}
-              onChange={onChange}
-              inputRef={ref}
-              value={value}
-            >
-              <MenuItem value="yes">Yes</MenuItem>
-              <MenuItem value="no">No</MenuItem>
-            </Select>
+      <Grid item>
+        <FormControl className={classes.FormControl}>
+          <InputLabel disableAnimation={true} htmlFor={"isFirstCar"}>
+            Is this your first car?
+          </InputLabel>
+          <Controller
+            control={control}
+            name="isFirstCar"
+            rules={{ required: true }}
+            defaultValue=""
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Select
+                label="Is this your first car?"
+                onBlur={onBlur}
+                id={"isFirstCar"}
+                onChange={onChange}
+                inputRef={ref}
+                value={value}
+              >
+                <MenuItem value="yes">Yes</MenuItem>
+                <MenuItem value="no">No</MenuItem>
+              </Select>
+            )}
+          />
+          {errors.isFirstCar && (
+            <Typography variant="subtitle2" color="error">
+              This Field is required
+            </Typography>
           )}
-        />
-        {errors.isFirstCar && (
-          <Typography paragraph color="error">
-            This Field is required
-          </Typography>
-        )}
-        <br />
-      </FormControl>
+        </FormControl>
+      </Grid>
     ) : null;
 
   return (
@@ -102,44 +106,51 @@ const FormStepTwo = (props) => {
         justify="center"
         style={{ minHeight: "calc(100vh - 81px)" }} //Height - navbar & borderBotton
       >
-        <Paper>
+        <Paper className={classes.Paper}>
           <form
             className={classes.Form}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <FormControl>
-              <FormLabel htmlFor={"isLicensed"}>
-                Do you own a driving license?
-              </FormLabel>
-              <Controller
-                control={control}
-                name="isLicensed"
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Select
-                    value={value}
-                    id={"isLicensed"}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    inputRef={ref}
-                  >
-                    <MenuItem value="yes">Yes</MenuItem>
-                    <MenuItem value="no">
-                      No, I prefer using other transport
-                    </MenuItem>
-                  </Select>
+            <Grid container direction={"column"} spacing={4}>
+              <Grid item>
+                <FormControl className={classes.FormControl}>
+                  <InputLabel disableAnimation={true} htmlFor={"isLicensed"}>
+                    Do you own a driving license?
+                  </InputLabel>
+                  <Controller
+                    control={control}
+                    name="isLicensed"
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                      <Select
+                        value={value}
+                        id={"isLicensed"}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        inputRef={ref}
+                      >
+                        <MenuItem value="yes">Yes</MenuItem>
+                        <MenuItem value="no">
+                          No, I prefer using other transport
+                        </MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+                {errors.isLicensed && (
+                  <Typography variant="subtitle2" color="error">
+                    This Field is required
+                  </Typography>
                 )}
-              />
-            </FormControl>
-            {errors.isLicensed && (
-              <Typography color="error">This Field is required</Typography>
-            )}
-            <br />
-            {bonusQuestion}
-            <Button type="submit" variant="outlined" color="primary">
-              Continue
-            </Button>
+              </Grid>
+              {bonusQuestion}
+              <Grid item>
+                <Button type="submit" variant="outlined" color="primary">
+                  Continue
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         </Paper>
       </Grid>

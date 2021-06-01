@@ -6,13 +6,15 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Container from "@material-ui/core/Container";
 
+import BarChart from "../components/Charts/BarChart";
+import PieChart from "../components/Charts/PieChart";
+
 const Statistics = (props) => {
-  const calculatePercentage = (
-    singleAmount,
-    allamounts = props.participants.total
-  ) => {
-    const percentage = allamounts ? (singleAmount / allamounts) * 100 : 0;
-    return +percentage.toFixed(2) + "%";
+  const calculatePercentage = (singleAmount) => {
+    const percentage = props.totalParticipants
+      ? (singleAmount / props.totalParticipants) * 100
+      : 0;
+    return parseInt(percentage.toFixed(2) + "%");
   };
 
   const calculateAverage = (valuesArr) => {
@@ -32,6 +34,9 @@ const Statistics = (props) => {
     unlicensed: calculatePercentage(props.participants.unlicensed),
     firstTimers: calculatePercentage(props.participants.firstTimers),
     targetables: calculatePercentage(props.participants.targetables),
+  };
+
+  const targetablesPercentages = {
     careAboutEmissions: calculatePercentage(
       props.targetablesData.careAboutEmissions,
       props.participants.targetables
@@ -61,10 +66,22 @@ const Statistics = (props) => {
     familyCars: calculateAverage(props.targetablesData.amountOfCars),
   };
 
+  const camelCaseToSentence = (string) => {
+    const result = string.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  };
+
   return (
     <Container>
       <Typography variant="h5">Statistics</Typography>
-      <List>
+      <BarChart
+        labels={Object.keys(props.participants).map((str) =>
+          camelCaseToSentence(str)
+        )}
+        values={Object.values(props.participants)}
+        datasetLabel={"Total Participants"}
+      />
+      {/* <List>
         <ListItem>
           {`${props.participants.underEighteen} adolescents participated in the
           survey`}
@@ -80,13 +97,19 @@ const Statistics = (props) => {
           {`${props.participants.targetables} targetables participated in the
           survey.`}
         </ListItem>
-      </List>
+      </List> */}
 
       <Typography variant="h6">
         A breakdown of each respondent group by percentage
       </Typography>
 
+      <PieChart
+        labels={Object.keys(percentages).map((str) => camelCaseToSentence(str))}
+        values={Object.values(percentages)}
+        datasetLabel={"Total Participants"}
+      />
       <List>
+        {console.log(percentages)}
         <ListItem>
           {`${percentages.adolescents} of all
           correspondents where under eighteen.`}
@@ -119,6 +142,7 @@ const mapStateToProps = (state) => {
   const statsState = {
     participants: state.formReducer.participants,
     targetablesData: state.formReducer.targetablesData,
+    totalParticipants: state.formReducer.totalParticipants,
   };
   return statsState;
 };

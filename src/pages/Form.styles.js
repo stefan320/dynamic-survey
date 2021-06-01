@@ -6,4 +6,11 @@ export const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
   },
+  Paper: {
+    width: "100%",
+    maxWidth: "650px",
+  },
+  FormControl: {
+    width: "100%",
+  },
 });

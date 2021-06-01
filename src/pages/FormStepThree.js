@@ -10,7 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import FormLabel from "@material-ui/core/FormLabel";
+import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -18,14 +18,13 @@ import Paper from "@material-ui/core/Paper";
 import { useStyles } from "./Form.styles";
 
 const FormStepThree = (props) => {
+  const classes = useStyles();
   const {
-    register,
     handleSubmit,
     control,
     watch,
     formState: { errors },
   } = useForm();
-
   const [alertDialogState, setAlertDialogState] = useState(false);
   const [alertDialogMsg, setDialogMsg] = useState("");
 
@@ -34,7 +33,6 @@ const FormStepThree = (props) => {
     name: "participantCars", // unique name for your Field Array
   });
 
-  const classes = useStyles();
   const totalCars = watch("totalCars");
 
   const onSubmit = (data) => {
@@ -70,86 +68,92 @@ const FormStepThree = (props) => {
     props.history.push("/");
   };
 
+  const isBmw = [];
   const cars = fields.map((field, index) => {
-    const isBmw =
-      watch(`participantCars.${index}.carBrand`) === "BMW" ? true : false;
+    isBmw.push(
+      watch(`participantCars.${index}.carBrand`) === "BMW" ? true : false
+    );
     return (
-      <Grid key={field.id} container direction="column">
-        <FormControl>
-          <FormLabel id={`carBrand-${index}-label`}>Car Brand</FormLabel>
+      <Grid key={field.id} container item direction="column" spacing={4}>
+        <Grid item>
+          <Typography>{`Car ${index + 1}`}</Typography>
+          <FormControl className={classes.FormControl}>
+            <InputLabel required id={`carBrand-${index}-label`}>
+              Car Brand
+            </InputLabel>
+            <Controller
+              control={control}
+              name={`participantCars.${index}.carBrand`}
+              rules={{ required: "This field is required" }}
+              defaultValue=""
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Select
+                  id={`participantCars.${index}.carBrand`}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                >
+                  <MenuItem value="Audi">Audi</MenuItem>
+                  <MenuItem value="BMW">BMW</MenuItem>
+                  <MenuItem value="Lexus">Lexus</MenuItem>
+                  <MenuItem value="Mazda">Mazda</MenuItem>
+                  <MenuItem value="Mercedes">Mercedes</MenuItem>
+                  <MenuItem value="Tesla">Tesla</MenuItem>
+                </Select>
+              )}
+            />
+          </FormControl>
+          {errors.participantCars &&
+          errors.participantCars[index] &&
+          errors.participantCars[index].carBrand ? (
+            <Typography variant="subtitle2" color="error">
+              {errors.participantCars[index].carBrand.message}
+            </Typography>
+          ) : null}
+        </Grid>
+        <Grid item>
           <Controller
             control={control}
-            name={`participantCars.${index}.carBrand`}
-            rules={{ required: "This field is required" }}
+            name={`participantCars.${index}.carModel`}
+            rules={{
+              required: "This field is required",
+              validate: {
+                carValidation: (value) => {
+                  // No validation if brand is not BMW
+                  if (isBmw[index]) {
+                    return (
+                      value[0].toLowerCase() === "m" || //starts with m
+                      value[0].toLowerCase() === "x" || // starts with x
+                      value[0].toLowerCase() === "z" || //starts with z
+                      (parseInt(value) && value.length === 1) || // 1 number
+                      (parseInt(value) && value.length === 3) || // 3 numbers
+                      "Invalid Car Model"
+                    );
+                    //Invalid message
+                  }
+                },
+              },
+            }}
             defaultValue=""
             render={({ field: { onChange, onBlur, value } }) => (
-              <Select
-                id={`participantCars.${index}.carBrand`}
-                value={value}
+              <TextField
+                fullWidth
+                id={`carModel-${index}`}
                 onChange={onChange}
                 onBlur={onBlur}
-              >
-                <MenuItem value="Audi">Audi</MenuItem>
-                <MenuItem value="BMW">BMW</MenuItem>
-                <MenuItem value="Lexus">Lexus</MenuItem>
-                <MenuItem value="Mazda">Mazda</MenuItem>
-                <MenuItem value="Mercedes">Mercedes</MenuItem>
-                <MenuItem value="Tesla">Tesla</MenuItem>
-              </Select>
+                value={value}
+                label="Car Model"
+              />
             )}
           />
-        </FormControl>
-        {errors.participantCars &&
-        errors.participantCars[index] &&
-        errors.participantCars[index].carBrand ? (
-          <Typography color="error">
-            {errors.participantCars[index].carBrand.message}
-          </Typography>
-        ) : null}
-
-        <br />
-        <FormLabel htmlFor={`carModel-${index}`}>Car Model</FormLabel>
-        <Controller
-          control={control}
-          name={`participantCars.${index}.carModel`}
-          rules={{
-            required: "This field is required",
-            validate: {
-              carValidation: (value) => {
-                // No validation if brand is not BMW
-                if (isBmw) {
-                  return (
-                    value[0].toLowerCase() === "m" || //starts with m
-                    value[0].toLowerCase() === "x" || // starts with x
-                    value[0].toLowerCase() === "z" || //starts with z
-                    (parseInt(value) && value.length === 1) || // 1 number
-                    (parseInt(value) && value.length === 3) || // 3 numbers
-                    "Invalid Car Model"
-                  );
-                  //Invalid message
-                }
-              },
-            },
-          }}
-          defaultValue=""
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextField
-              id={`carModel-${index}`}
-              onChange={onChange}
-              onBlur={onBlur}
-              value={value}
-            />
-          )}
-        />
-        {console.log(errors)}
-        {errors.participantCars &&
-          (errors.participantCars[index] &&
-          errors.participantCars[index].carModel ? (
-            <Typography color="error">
-              {errors.participantCars[index].carModel.message}
-            </Typography>
-          ) : null)}
-        <br />
+          {errors.participantCars &&
+            (errors.participantCars[index] &&
+            errors.participantCars[index].carModel ? (
+              <Typography variant="subtitle2" color="error">
+                {errors.participantCars[index].carModel.message}
+              </Typography>
+            ) : null)}
+        </Grid>
       </Grid>
     );
   });
@@ -169,105 +173,114 @@ const FormStepThree = (props) => {
         justify="center"
         style={{ minHeight: "calc(100vh - 81px)" }} //Height - navbar & borderBotton
       >
-        <Paper>
+        <Paper className={classes.Paper}>
           <form
             className={classes.Form}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <FormControl>
-              <FormLabel htmlFor="drivetrain">
-                Which drivetrain do you prefer?
-              </FormLabel>
-              <br />
-              <Controller
-                control={control}
-                id="drivetrain"
-                name="drivetrain"
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Select
-                    value={value}
-                    id={"drivetrain"}
-                    color={"secondary"}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                  >
-                    <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
-                    <MenuItem value="fwd">Front Wheel Drive</MenuItem>
-                    <MenuItem value="idk">I don't know</MenuItem>
-                  </Select>
-                )}
-              />
-
-              {errors.drivetrain && (
-                <Typography color="error">This Field is required</Typography>
-              )}
-            </FormControl>
-            <br />
-            <FormControl>
-              <FormLabel htmlFor={"emissions"}>
-                Are you worried about emissions?
-              </FormLabel>
-              <br />
-              <Controller
-                control={control}
-                name={"emissions"}
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Select
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    id={"emissions"}
-                    color={"secondary"}
-                    inputRef={ref}
-                  >
-                    <MenuItem value="yes">Yes</MenuItem>
-                    <MenuItem value="no">No</MenuItem>
-                  </Select>
-                )}
-              />
-              {errors.emissions && (
-                <Typography color="error">This Field is required</Typography>
-              )}
-            </FormControl>
-            <br />
-            <FormLabel htmlFor={"totalCars"}>
-              How many cars do you have in your family?
-            </FormLabel>
-            <br />
-            <Controller
-              control={control}
-              id="totalCars"
-              name="totalCars"
-              rules={{
-                required: "This Field is required",
-                min: {
-                  value: 0,
-                  message: "Invalid number",
-                },
-              }}
-              defaultValue=""
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <TextField
-                  type="number"
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  inputRef={ref}
+            <Grid container direction={"column"} spacing={4}>
+              <Grid item>
+                <FormControl className={classes.FormControl}>
+                  <InputLabel htmlFor="drivetrain">
+                    Which drivetrain do you prefer?
+                  </InputLabel>
+                  <Controller
+                    control={control}
+                    id="drivetrain"
+                    name="drivetrain"
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Select
+                        value={value}
+                        id={"drivetrain"}
+                        color={"secondary"}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                      >
+                        <MenuItem value="rwd">Rear Wheel Drive</MenuItem>
+                        <MenuItem value="fwd">Front Wheel Drive</MenuItem>
+                        <MenuItem value="idk">I don't know</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.drivetrain && (
+                    <Typography variant="subtitle2" color="error">
+                      This Field is required
+                    </Typography>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <FormControl className={classes.FormControl}>
+                  <InputLabel htmlFor={"emissions"}>
+                    Are you worried about emissions?
+                  </InputLabel>
+                  <Controller
+                    control={control}
+                    name={"emissions"}
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                      <Select
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        id={"emissions"}
+                        color={"secondary"}
+                        inputRef={ref}
+                      >
+                        <MenuItem value="yes">Yes</MenuItem>
+                        <MenuItem value="no">No</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.emissions && (
+                    <Typography variant="subtitle2" color="error">
+                      This Field is required
+                    </Typography>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <Controller
+                  control={control}
+                  id="totalCars"
+                  name="totalCars"
+                  rules={{
+                    required: "This Field is required",
+                    min: {
+                      value: 0,
+                      message: "Invalid number",
+                    },
+                  }}
+                  defaultValue=""
+                  render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label="How many cars do you have in your family?"
+                      value={value}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      inputRef={ref}
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.totalCars && (
-              <Typography color="error">{errors.totalCars.message}</Typography>
-            )}
-            <br />
-            {cars}
-            <Button type="submit" color="primary" variant="outlined">
-              Continue
-            </Button>
+
+                {errors.totalCars && (
+                  <Typography variant="subtitle2" color="error">
+                    {errors.totalCars.message}
+                  </Typography>
+                )}
+              </Grid>
+              {cars}
+              <Grid item>
+                <Button type="submit" color="primary" variant="outlined">
+                  Continue
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         </Paper>
       </Grid>

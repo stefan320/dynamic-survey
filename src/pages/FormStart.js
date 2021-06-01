@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
+import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import Typography from "@material-ui/core/Typography";
@@ -20,7 +20,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 const FormStart = (props) => {
   const classes = useStyles();
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
@@ -60,65 +59,77 @@ const FormStart = (props) => {
         justify="center"
         style={{ minHeight: "calc(100vh - 81px)" }} //Height - navbar & borderBotton
       >
-        <Paper>
+        <Paper className={classes.Paper}>
           <form
             className={classes.Form}
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <FormLabel htmlFor="age">Age</FormLabel>
-            <Controller
-              control={control}
-              name="age"
-              rules={{
-                required: "This Field is required",
-                min: { value: 0, message: "Invalid Age" },
-                max: { value: 100, message: "Invalid Age" },
-              }}
-              defaultValue=""
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <TextField
-                  type="number"
-                  id={"age"}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  inputRef={ref}
+            <Grid container direction={"column"} spacing={4}>
+              <Grid item>
+                <Controller
+                  control={control}
+                  name="age"
+                  rules={{
+                    required: "This Field is required",
+                    min: { value: 1, message: "Invalid Age" },
+                    max: { value: 100, message: "Invalid Age" },
+                  }}
+                  defaultValue=""
+                  render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <TextField
+                      fullWidth
+                      type="number"
+                      id={"age"}
+                      value={value}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      inputRef={ref}
+                      label="Age"
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.age && (
-              <Typography color="error">{errors.age.message}</Typography>
-            )}
-            <br />
-            <FormControl>
-              <FormLabel htmlFor={"gender"}>Gender</FormLabel>
-              <Controller
-                control={control}
-                name="gender"
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Select
-                    id={"gender"}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    inputRef={ref}
-                  >
-                    <MenuItem value="male">Male</MenuItem>
-                    <MenuItem value="female">Female</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
-                  </Select>
+                {errors.age && (
+                  <Typography color="error" variant="subtitle2">
+                    {errors.age.message}
+                  </Typography>
                 )}
-              />
-              {errors.gender && (
-                <Typography color="error">This Field is required</Typography>
-              )}
-            </FormControl>
-            <br />
-            <Button type="submit" variant="outlined" color="primary">
-              Continue
-            </Button>
+              </Grid>
+
+              <Grid item>
+                <FormControl className={classes.FormControl}>
+                  <InputLabel htmlFor={"gender"}>Gender</InputLabel>
+                  <Controller
+                    control={control}
+                    name="gender"
+                    rules={{ required: true }}
+                    defaultValue=""
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                      <Select
+                        id={"gender"}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        inputRef={ref}
+                      >
+                        <MenuItem value="male">Male</MenuItem>
+                        <MenuItem value="female">Female</MenuItem>
+                        <MenuItem value="other">Other</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.gender && (
+                    <Typography color="error" variant="subtitle2">
+                      This Field is required
+                    </Typography>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <Button type="submit" variant="outlined" color="primary">
+                  Continue
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         </Paper>
       </Grid>
