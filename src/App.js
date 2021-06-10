@@ -4,7 +4,7 @@ import Header from "./components/Header/Header";
 import FormStart from "./pages/FormStart";
 import FormStepTwo from "./pages/FormStepTwo";
 import FormStepThree from "./pages/FormStepThree";
-import Statistics from "./pages/Statistics";
+import Statistics from "./pages/Statistics/Statistics";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";

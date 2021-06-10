@@ -1,6 +1,9 @@
+import { Typography } from "@material-ui/core";
 import { Pie } from "react-chartjs-2";
+import { useStyles } from "./PieChart.styles.js";
 
 const PieChart = (props) => {
+  const classes = useStyles();
   const data = {
     labels: props.labels,
     datasets: [
@@ -29,17 +32,14 @@ const PieChart = (props) => {
   };
 
   const options = {
-    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         callbacks: {
           label: function (context) {
             let label = context.label || "";
-
             if (label) {
               label = `${label}: ${context.raw}%`;
             }
-
             return label;
           },
         },
@@ -49,7 +49,13 @@ const PieChart = (props) => {
 
   return (
     <div>
-      <Pie data={data} options={options} style={{ maxWidth: "500px" }} />
+      {props.values.some((data) => data !== 0) ? (
+        <Pie data={data} options={options} className={classes.PieChart} />
+      ) : (
+        <Typography>
+          There where no submissions for this section so far.
+        </Typography>
+      )}
     </div>
   );
 };

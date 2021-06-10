@@ -1,6 +1,8 @@
 import { Bar } from "react-chartjs-2";
+import { useStyles } from "./BarChart.styles";
 
 const BarChart = (props) => {
+  const classes = useStyles();
   const data = {
     labels: props.labels,
     datasets: [
@@ -29,28 +31,21 @@ const BarChart = (props) => {
   };
 
   const options = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-      xAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
+    responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        min: 0,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
   };
 
   return (
-    <div>
-      <Bar data={data} options={options} style={{ maxWidth: "500px" }} />
+    <div className={classes.BarChart}>
+      <Bar data={data} options={options} className={classes.BarChart} />
     </div>
   );
 };
