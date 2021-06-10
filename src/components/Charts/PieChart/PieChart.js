@@ -53,7 +53,7 @@ const PieChart = (props) => {
         <Pie data={data} options={options} className={classes.PieChart} />
       ) : (
         <Typography>
-          There where no submissions for this section so far.
+          There were no submissions for this section so far.
         </Typography>
       )}
     </div>

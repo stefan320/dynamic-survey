@@ -47,8 +47,6 @@ const Statistics = (props) => {
     ),
   };
 
-  console.log(percentages);
-
   const targetablesPercentages = {
     careAboutEmissions: calculatePercentage(
       props.targetablesData.careAboutEmissions,
@@ -104,7 +102,7 @@ const Statistics = (props) => {
               camelCaseToSentence(str)
             )}
             values={Object.values(props.participants)}
-            datasetLabel={"Respondents groups"}
+            datasetLabel={"Total respondents"}
           />
         </Box>
         <Box py={2}>
